@@ -4,6 +4,8 @@ const changes = require('concurrent-couch-follower');
 
 const db = 'https://replicate.npmjs.com';
 const packages_dir = 'packages/';
+const printDebug = 0;
+// const letters = /^[0-9a-zA-Z]+$/;
 
 var dataHandler = function(data, done) {
 
@@ -16,6 +18,13 @@ var dataHandler = function(data, done) {
 
 		// get package name, replace /'s with ~'s to avoid invalid file directory names
 		let package_name = data.id.replace(/\//g, '~');
+
+		// do not track the file if it has illegal * in name (not able to create folders with that char)
+		if (package_name.includes('*')){
+			console.log(package_name + " not taken because it contains illegal characters");
+			done();
+			return;
+		}
 
 		// create a directory for this package if one does not already exist
 		if (!fs.existsSync(packages_dir + package_name)) {
@@ -70,31 +79,35 @@ var dataHandler = function(data, done) {
 			//writing the metadata a file in the folder labeled versionNum_metadata as long as it doesn't exist already
 			if(!fs.existsSync(metadata_path)){ 
 				fs.mkdirSync(metadata_path, (err, folder) => {
-					
-					console.log("Created folder for "+ version_metadata.name);
+					if(printDebug)
+						console.log("Created folder for "+ version_metadata.name);
 					fs.writeFile(metadata_path + '/' + 'metadata.txt', version_metadata, (err) => {
-						if(err) {
+						if(err)
 							console.log("Error writing metadata of " + version_metadata.name + " to file")
-						} else {
-							console.log("Wrote metadata of "+ version_metadata.name + " to file");
+						else {
+							if(printDebug)
+								console.log("Wrote metadata of "+ version_metadata.name + " to file");
 						}
 					});
 				});
 			} else {
 				fs.writeFile(metadata_path + '/' + 'metadata.txt', JSON.stringify(version_metadata), (err) => {
-						if(err) {
-							console.log("Error writing metadata of " + version_metadata.name + " to file")
-						} else {
+					if(err) {
+						console.log("Error writing metadata of " + version_metadata.name + " to file")
+					} else {
+						if(printDebug)
 							console.log("Wrote metadata of "+ version_metadata.name + " to file");
 						}
 				});
 			}
 
-			// download file located at tarball_url
-			// let req = request(tarball_url);
-			// req.on('response', (res) => {
-			// 	res.pipe(fs.createWriteStream(tarball_path));
-			// });
+			//download file located at tarball_url
+			let req = request(tarball_url).pipe(fs.createWriteStream(tarball_path));
+			if(printDebug){
+				req.on('finish', (res) => { // just necessary to print confirmation comment out if not needed
+					console.log("Downloaded and wrote " + version_metadata.name + " to disk");
+				});
+			}
 		}
 	}
 

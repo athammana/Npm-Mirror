@@ -1,0 +1,20 @@
+{
+  "name": "mamo",
+  "version": "1.0.0",
+  "description": "Mathematical Modelling Tool",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "mocha lib/*.spec.js"
+  },
+  "keywords": [
+    "mathematics",
+    "model",
+    "modelling"
+  ],
+  "author": "The Trussle Team",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
+  }
+}
