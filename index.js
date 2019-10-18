@@ -70,6 +70,8 @@ var dataHandler = function(data, done) {
 			//writing the metadata a file in the folder labeled versionNum_metadata as long as it doesn't exist already
 			if(!fs.existsSync(metadata_path)){ 
 				fs.mkdirSync(metadata_path, (err, folder) => {
+					
+					console.log("Created folder for "+ version_metadata.name);
 					fs.writeFile(metadata_path + '/' + 'metadata.txt', version_metadata, (err) => {
 						if(err) {
 							console.log("Error writing metadata of " + version_metadata.name + " to file")
@@ -77,6 +79,14 @@ var dataHandler = function(data, done) {
 							console.log("Wrote metadata of "+ version_metadata.name + " to file");
 						}
 					});
+				});
+			} else {
+				fs.writeFile(metadata_path + '/' + 'metadata.txt', JSON.stringify(version_metadata), (err) => {
+						if(err) {
+							console.log("Error writing metadata of " + version_metadata.name + " to file")
+						} else {
+							console.log("Wrote metadata of "+ version_metadata.name + " to file");
+						}
 				});
 			}
 
