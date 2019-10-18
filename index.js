@@ -7,6 +7,10 @@ const packages_dir = 'packages/';
 const printDebug = 0;
 // const letters = /^[0-9a-zA-Z]+$/;
 
+if (!fs.existsSync(packages_dir)) {
+	fs.mkdirSync(packages_dir)
+}
+
 var dataHandler = function(data, done) {
 
 	if (data.doc.name) { // ignore seq_updates that aren't package updates
