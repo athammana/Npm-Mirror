@@ -1,0 +1,36 @@
+What level of javascript knowledge does he think the project requires?
+
+Relevant libraries to know and use?
+
+How far does the mirroring go? with like a changelog or actually download the code if it changes - just reinstall the packages or make a new folder with the date changed or something
+-- not need to download every package right now, once thats complete someone will buy something to track changes
+-- download every version of every package 
+-- up to me if I think we can change just changed files if its easy to implement and able to keep up to npm in real time, and computationally ok
+
+Time frame? and expected amount of time this will take me?
+
+curious about the actual project, how will you be recognizing how a package has been infiltrated?
+
+About the actual code:
+
+is the tarball url the actual code?
+yeah download from that code
+
+does the database return the code or will I have to get the updated code from the repository link it sends?
+
+START A GITHUB REPO AND ADD MATT
+
+mt3443
+
+This download is just one tool, we need to develop a system that catches malware in npm
+
+There is another paper that just mentions the problem while we are fixing
+
+4 Main infiltrations: 
+	general javascript obfuscation (complicate code to disguise whats going on) (no need to obfuscate because 			npm is open source so it doesnt need to be  obfuscated,
+	Abstract syntax trees: builds a random forest classifier based on the syntax (need examples of malicious 			and benign code), -- have a classifier that catches around 80% of malicious code
+	addition of potentially malicious functions -- node js is able to make syscalls and download files, so 				basically if there are new functionalities that need those high level functions then its 				pretty suspicious and is the general attack vector (download file from their server and run it, or 		upload data from your computer) --create a list of potentially malicious functions
+	One attacker gains access to multiple packages and then use a remote server to steal info from people using 			packages, url blacklist if its trying to upload to there
+
+Endgoal: not to totally declare something is malicious, just to allow people to investigate if it is potentially malicious, right now npm package just downloads, the user should be able to check these things
+	
