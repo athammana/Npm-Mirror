@@ -21,6 +21,12 @@ var dataHandler = function(data, done) {
 		// get package name, replace /'s with ~'s to avoid invalid file directory names
 		let package_name = data.id.replace(/\//g, '~');
 
+		if (package_name.includes('*')) {
+			done();
+			return;
+		}
+
+
 		// return if the package has zero versions available
 		if (Object.keys(data.doc.versions).length == 0) {
 			done();
