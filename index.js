@@ -97,7 +97,7 @@ var dataHandler = function(data, done) {
 var config = {
 	db: db,
 	include_docs: true,
-	concurrency: 5
+	concurrency: 1
 }
 
 changes(dataHandler, config)
