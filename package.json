@@ -1,0 +1,23 @@
+{
+  "name": "npm-mirror",
+  "version": "1.0.0",
+  "description": "Listens for updates to official NPM registry. Downloads package source code and metadata whenever a new package is released",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/athammana/Npm-Mirror.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/athammana/Npm-Mirror/issues"
+  },
+  "homepage": "https://github.com/athammana/Npm-Mirror#readme",
+  "dependencies": {
+    "concurrent-couch-follower": "^1.3.0",
+    "request": "^2.88.0"
+  }
+}

@@ -4,8 +4,6 @@ const changes = require('concurrent-couch-follower');
 
 const db = 'https://replicate.npmjs.com';
 const packages_dir = 'packages/';
-const printDebug = 0;
-// const letters = /^[0-9a-zA-Z]+$/;
 
 if (!fs.existsSync(packages_dir)) {
 	fs.mkdirSync(packages_dir)
@@ -22,18 +20,6 @@ var dataHandler = function(data, done) {
 
 		// get package name, replace /'s with ~'s to avoid invalid file directory names
 		let package_name = data.id.replace(/\//g, '~');
-
-		// do not track the file if it has illegal * in name (not able to create folders with that char)
-		if (package_name.includes('*')){
-			console.log(package_name + " not taken because it contains illegal characters");
-			done();
-			return;
-		}
-
-		// create a directory for this package if one does not already exist
-		if (!fs.existsSync(packages_dir + package_name)) {
-			fs.mkdirSync(packages_dir + package_name);
-		}
 
 		// return if the package has zero versions available
 		if (Object.keys(data.doc.versions).length == 0) {
@@ -74,44 +60,34 @@ var dataHandler = function(data, done) {
 			return;
 		}
 
+		// create a directory for this package if one does not already exist
+		if (!fs.existsSync(packages_dir + package_name)) {
+			fs.mkdirSync(packages_dir + package_name);
+		}
+
 		let tarball_url = version_metadata['dist']['tarball'];
 		let tarball_path = packages_dir + package_name + '/' + latest_version + '.tgz';
-		let metadata_path = packages_dir + package_name + '/' + latest_version + '_metadata';
+		let metadata_path = packages_dir + package_name + '/' + latest_version + '.metadata';
 
 		// skip versions that are already downloaded (this occurs when a single version is given multiple dist-tags)
 		if (!fs.existsSync(tarball_path)) {
-			//writing the metadata a file in the folder labeled versionNum_metadata as long as it doesn't exist already
-			if(!fs.existsSync(metadata_path)){ 
-				fs.mkdirSync(metadata_path, (err, folder) => {
-					if(printDebug)
-						console.log("Created folder for "+ version_metadata.name);
-					fs.writeFile(metadata_path + '/' + 'metadata.txt', version_metadata, (err) => {
-						if(err)
-							console.log("Error writing metadata of " + version_metadata.name + " to file")
-						else {
-							if(printDebug)
-								console.log("Wrote metadata of "+ version_metadata.name + " to file");
-						}
-					});
-				});
-			} else {
-				fs.writeFile(metadata_path + '/' + 'metadata.txt', JSON.stringify(version_metadata), (err) => {
-					if(err) {
-						console.log("Error writing metadata of " + version_metadata.name + " to file")
-					} else {
-						if(printDebug)
-							console.log("Wrote metadata of "+ version_metadata.name + " to file");
-						}
-				});
-			}
 
-			//download file located at tarball_url
-			let req = request(tarball_url).pipe(fs.createWriteStream(tarball_path));
-			if(printDebug){
-				req.on('finish', (res) => { // just necessary to print confirmation comment out if not needed
-					console.log("Downloaded and wrote " + version_metadata.name + " to disk");
-				});
-			}
+			// save metadata to a file
+			fs.writeFile(metadata_path, JSON.stringify(version_metadata), (error) => {
+				if (error) {
+					console.log(error);
+				}
+			});
+
+			// download source code
+			let tarball_file = fs.createWriteStream(tarball_path);
+			request(tarball_url)
+				.pipe(tarball_file)
+				.on('error', (error) => {
+					console.log(package_name, error);
+				}
+			);
+
 		}
 	}
 
